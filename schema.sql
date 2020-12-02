@@ -23,5 +23,8 @@ CREATE TABLE employee (
     last_name VARCHAR(30) NOT NULL,
     role_id INT NOT NULL,
     INDEX role_index (role_id),
-    CONSTRAINT FK_role FOREIGN KEY (role_id) REFERENCES role(id)
+    CONSTRAINT FK_role FOREIGN KEY (role_id) REFERENCES role(id),
+    manager_id INT,
+    INDEX manager_index (manager_id),
+    CONSTRAINT FK_manager FOREIGN KEY manager_id REFERENCES employee(id)
 );

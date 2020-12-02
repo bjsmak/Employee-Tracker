@@ -39,7 +39,7 @@ function employeeSearch() {
             "End"
         ]
     }).then(answer => {
-        switch (answer.choice) {
+        switch (answer.selection) {
             case "View Employee List":
                 employeeList()
                 break;
@@ -57,6 +57,8 @@ function employeeSearch() {
 
 function employeeList() {
     connection.query("SELECT * FROM employee", function (err, data) {
+        console.log('Generating')
+        if (err) throw err;
         console.table(data);
         employeeSearch();
     })
