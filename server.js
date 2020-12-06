@@ -24,6 +24,7 @@ employeeSearch();
 });
 
 function employeeSearch() {
+    //Inquirer options for user
     inquirer.prompt({
         message: "Please select what you would like to perform",
         type: "list",
@@ -36,9 +37,11 @@ function employeeSearch() {
             "Add Department",
             "Add Role",
             "Update Employee Role",
+            "Update Employee Manager",
             "End"
         ]
     }).then(answer => {
+        //Case statement for inquirer selection
         switch (answer.selection) {
             case "View Employee List":
                 employeeList()
@@ -68,6 +71,10 @@ function employeeSearch() {
                 updateEmployeeRole()
                 break;
             
+            case "Update Employee Manager":
+                updateEmployeeManager()
+                break;
+
             case "End":
                 console.log('Thank you!');
                 connection.end()
@@ -103,6 +110,7 @@ function roleList() {
 }
 
 function addEmployee() {
+    //inquirer prompt questions for employee info
     inquirer.prompt([
         {
             message:"What is the employee's first name?",
@@ -125,10 +133,102 @@ function addEmployee() {
             name:'managerID'
         }
     ]).then(function(res){
+        //query to insert into database
         connection.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [res.firstName, res.lastName, res.roleID, res.managerID],
         function(err, data){
             if (err) throw err;
             console.log('Added Employee');
+            employeeSearch();
+        })
+    })
+}
+
+function addDepartment(){
+    //inquirer prompt questions for department info
+    inquirer.prompt([
+        {
+            message:"What is the name of the department?",
+            type:'input',
+            name:'deptName'
+        }
+    ]).then(function(res){
+        //query to insert insert into database
+        connection.query('INSERT INTO department (name) VALUES (?)', [res.deptName], function(err, data){
+            if (err) throw err;
+            console.log('Added Department');
+            employeeSearch();
+        })
+    })
+}
+
+function addRole(){
+    //inquirer prompt questions for role info
+    inquirer.prompt([
+        {
+            message:"What is the title of the role?",
+            type:'input',
+            name:'roleTitle'
+        },
+        {
+            message:"What is the salary of the role?",
+            type:'input',
+            name:'roleSalary'
+        },
+        {
+            message:"What is the department ID of the role?",
+            type:'input',
+            name:'deptID'
+        }
+    ]).then(function(res){
+        //query to insert into database
+        connection.query('INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)', [res.roleTitle, res.roleSalary, res.deptID], function(err, data){
+            if (err) throw err;
+            console.log('Added Role');
+            employeeSearch();
+        })
+    })
+}
+
+function updateEmployeeRole(){
+    //inquirer prompt
+    inquirer.prompt([
+        {
+            message:"What employee will you update?",
+            type:'input',
+            name:'name'
+        },
+        {
+            message:"Please enter the new role ID",
+            type:'input',
+            name:'roleID'
+        },
+    ]).then(function(res){
+        connection.query("UPDATE employee SET role_id = ? WHERE first_name = ?", [res.roleID, res.name], function(err, data){
+            if (err) throw err;
+            console.log('Updated Role');
+            employeeSearch();
+        })
+    })
+}
+
+function updateEmployeeManager(){
+    //inquirer prompt
+    inquirer.prompt([
+        {
+            message:"What employee will you update?",
+            type:'input',
+            name:'name'
+        },
+        {
+            message:"Please enter the manager ID",
+            type:'input',
+            name:'mgrID'
+        }
+    ]).then(function(res){
+        //query to insert into database
+        connection.query("UPDATE employee SET manager_id = ? WHERE first_name = ?", [res.mgrID, res.name], function(err,data){
+            if (err) throw err;
+            console.log('Updated Manager ID');
             employeeSearch();
         })
     })
